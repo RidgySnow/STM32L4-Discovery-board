@@ -307,13 +307,14 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
   /** Initializes the peripherals clock
   */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SAI1;
-    PeriphClkInit.Sai1ClockSelection = RCC_SAI1CLKSOURCE_PLLSAI2;
-    PeriphClkInit.PLLSAI2.PLLSAI2Source = RCC_PLLSOURCE_HSE;
-    PeriphClkInit.PLLSAI2.PLLSAI2M = 3;
-    PeriphClkInit.PLLSAI2.PLLSAI2N = 8;
-    PeriphClkInit.PLLSAI2.PLLSAI2P = RCC_PLLP_DIV7;
-    PeriphClkInit.PLLSAI2.PLLSAI2R = RCC_PLLR_DIV2;
-    PeriphClkInit.PLLSAI2.PLLSAI2ClockOut = RCC_PLLSAI2_SAI2CLK;
+    PeriphClkInit.Sai1ClockSelection = RCC_SAI1CLKSOURCE_PLLSAI1;
+    PeriphClkInit.PLLSAI1.PLLSAI1Source = RCC_PLLSOURCE_HSE;
+    PeriphClkInit.PLLSAI1.PLLSAI1M = 3;
+    PeriphClkInit.PLLSAI1.PLLSAI1N = 16;
+    PeriphClkInit.PLLSAI1.PLLSAI1P = RCC_PLLP_DIV7;
+    PeriphClkInit.PLLSAI1.PLLSAI1Q = RCC_PLLQ_DIV2;
+    PeriphClkInit.PLLSAI1.PLLSAI1R = RCC_PLLR_DIV2;
+    PeriphClkInit.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_SAI1CLK;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
     {
       Error_Handler();

@@ -160,7 +160,7 @@
   *        frequency.
   */
 #if !defined  (EXTERNAL_SAI1_CLOCK_VALUE)
-  #define EXTERNAL_SAI1_CLOCK_VALUE    2097000U /*!< Value of the SAI1 External clock source in Hz*/
+  #define EXTERNAL_SAI1_CLOCK_VALUE    12288000U /*!< Value of the SAI1 External clock source in Hz*/
 #endif /* EXTERNAL_SAI1_CLOCK_VALUE */
 
 /**

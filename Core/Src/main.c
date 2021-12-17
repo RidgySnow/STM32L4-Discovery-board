@@ -71,7 +71,7 @@ uint8_t PSBVOL[] = {(uint8_t)PASSBVOL_REG, (uint8_t)0x0F}; //volume +12dB channe
 uint8_t MASTER_VOLUME[] = {(uint8_t)MASTER_VOLUME_REG,(uint8_t)0x18};//volume 12 db
 uint8_t BEEPVOL_OFFTIME[] = {(uint8_t)BEEP_VOLUME_OFFTIME_REG,(uint8_t)0x06};//volume 12 db, off time 1.23s (for 96 kHz)
 uint8_t BEEPFREQ_ONTIME[] = {(uint8_t)BEEP_FREQ_ONTIME_REG,(uint8_t)0x77};//beep freq 1000 Hz, on time 2.50s
-uint8_t MISCEL_CONTROLS[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0xC2};//passthrough analog to HP line enabled, softramp enabled
+uint8_t MISCEL_CONTROLS[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0x60};//passthrough analog A to HP line enabled, B disabled and muted
 uint8_t POWER_CR2[] = {(uint8_t)POWER_CR2_REG,(uint8_t)0xAF};//HP line always on, speaker power always off
 uint8_t BEEP[] = {(uint8_t)BEEP_REG,(uint8_t)0x81};//multiple beeping, mix with SAI disabled, treble corner freq 5kHz, bass corner freq 50Hz, tone control enabled; change last!!!
 //------------------------------------------------------
@@ -90,6 +90,7 @@ uint8_t CODAC_PU = 0x02;//power reg adr
 uint8_t CODAC_PU_EN = 0x9E;//power reg status
 uint8_t CODAC_IC_ADDR = 0x06;
 uint8_t INTRFC_CR1 = 0x06;//Interface Control 1 reg address
+//uint8_t SAI_TX_BUFF = {};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -154,8 +155,6 @@ int main(void)
 	HAL_NVIC_EnableIRQ(TIM6_IRQn);
 	HAL_NVIC_EnableIRQ(SAI1_IRQn);
 	
-	HAL_GPIO_TogglePin(GPIOE,GPIO_PIN_3);// reset the codac
-	HAL_GPIO_TogglePin(GPIOE,GPIO_PIN_3);
 	//Codac setup via I2C1 begin
 	// Reading from registers to make sure that it works and checking 
 	// if register Power Ctl 1 is set to 0x01
@@ -171,24 +170,32 @@ int main(void)
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,CLOCK_AUTO,2,TIMEOUT);	
 	//  BEEP GENERATOR SETUP FOR A MULTIPLE PULSES
 	//---------------------------------------------------------------------------
-	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_CR2,2,TIMEOUT);	
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_CR2,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
 	
-	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,MASTER_VOLUME,2,TIMEOUT);	
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,MASTER_VOLUME,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
 
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEPVOL_OFFTIME,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEPFREQ_ONTIME,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
 	
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,MISCEL_CONTROLS,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	
-	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_CR2,2,TIMEOUT);	
 
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEP,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_UP,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
+	
+	__HAL_SAI_ENABLE(&hsai_BlockA1);
 	//---------------------------------------------------------------------------
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_IC_ADDR,1,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_IC_ADDR,1,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 //	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_BEEP,1,TIMEOUT);
 //	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 //	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_PU,1,TIMEOUT);
@@ -207,7 +214,8 @@ int main(void)
 
 		//HAL_SAI_Transmit use in to transmit data in blocking mode
 		//or use HAL_SAI_Transmit_IT to send data in nonblocking mode
-		
+
+
 		
     /* USER CODE END WHILE */
 
@@ -484,6 +492,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF13_SAI1;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
