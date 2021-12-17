@@ -154,8 +154,8 @@ int main(void)
 	HAL_NVIC_EnableIRQ(TIM6_IRQn);
 	HAL_NVIC_EnableIRQ(SAI1_IRQn);
 	
-	HAL_GPIO_TogglePin(GPIOE,3);// reset the codac
-	HAL_GPIO_TogglePin(GPIOE,3);
+	HAL_GPIO_TogglePin(GPIOE,GPIO_PIN_3);// reset the codac
+	HAL_GPIO_TogglePin(GPIOE,GPIO_PIN_3);
 	//Codac setup via I2C1 begin
 	// Reading from registers to make sure that it works and checking 
 	// if register Power Ctl 1 is set to 0x01

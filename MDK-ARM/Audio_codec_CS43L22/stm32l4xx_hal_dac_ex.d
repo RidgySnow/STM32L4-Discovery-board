@@ -6,7 +6,7 @@ audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4xx.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l476xx.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/core_cm4.h
-audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: D:\Program Files\MDK-ARM\ARM\ARMCC\Bin\..\include\stdint.h
+audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: D:\Program Files\MDK_ARM\ARM\ARMCC\Bin\..\include\stdint.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/cmsis_version.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
@@ -14,7 +14,7 @@ audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/system_stm32l4xx.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: D:\Program Files\MDK-ARM\ARM\ARMCC\Bin\..\include\stddef.h
+audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: D:\Program Files\MDK_ARM\ARM\ARMCC\Bin\..\include\stddef.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_rcc_ex.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_gpio.h
 audio_codec_cs43l22\stm32l4xx_hal_dac_ex.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_gpio_ex.h
