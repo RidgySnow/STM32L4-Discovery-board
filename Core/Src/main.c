@@ -91,6 +91,7 @@ uint8_t CODAC_PU_EN = 0x9E;//power reg status
 uint8_t CODAC_IC_ADDR = 0x06;
 uint8_t INTRFC_CR1 = 0x06;//Interface Control 1 reg address
 //uint8_t SAI_TX_BUFF = {};
+uint8_t SAI_TRANSFER[] = {0, 0xFF, 0xFF};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -203,6 +204,7 @@ int main(void)
 //	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_BPVOL,1,TIMEOUT);
 //	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	// Setup end
+	HAL_SAI_Transmit_IT(&hsai_BlockA1, SAI_TRANSFER, 3);//Transfer data to pump up the codac
   //Codac setup via I2C1 end
 	
   /* USER CODE END 2 */
@@ -214,6 +216,7 @@ int main(void)
 
 		//HAL_SAI_Transmit use in to transmit data in blocking mode
 		//or use HAL_SAI_Transmit_IT to send data in nonblocking mode
+		
 
 
 		
