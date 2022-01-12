@@ -41,7 +41,15 @@
 #define PLAYBACKC_2_REG 0x0F // playback control 2
 #define PASSAVOL_REG 0x14 // Passthrough A Volume
 #define PASSBVOL_REG 0x15 // Passthrough B Volume
-#define MISCELLANEOUS_CONTROLS_REG 0x0E //MISCELLANEOUS CONTROLS register 
+#define MISCELLANEOUS_CONTROLS_REG 0x0E //MISCELLANEOUS CONTROLS register
+#define INTERFACE_CONTROL_1_REG 0x06 //inerface control 1 register
+#define INTERFACE_CONTROL_2_REG 0x07 //interface control 2 register
+#define PCMA_REG 0x1A
+#define PCMB_REG 0x1B
+#define MSTA_REG 0x20
+#define MSTB_REG 0x21
+#define SPKA_REG 0x24
+#define SPKB_REG 0x25
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -65,7 +73,7 @@ uint8_t POWER_UP[] = {(uint8_t)POWER_UP_REG,(uint8_t)0x9E}; //PU sequence
 uint8_t CLOCK_AUTO[] = {(uint8_t)CLOCK_CONTROL_REG,(uint8_t)0x80};
 uint8_t PBCR_2[] = {(uint8_t)PLAYBACKC_2_REG, (uint8_t)0x08};
 uint8_t PSAVOL[] = {(uint8_t)PASSAVOL_REG, (uint8_t)0x0F}; //volume +12dB channel A
-uint8_t PSBVOL[] = {(uint8_t)PASSBVOL_REG, (uint8_t)0x0F}; //volume +12dB channel B
+uint8_t PSBVOL[] = {(uint8_t)PASSBVOL_REG, (uint8_t)0x0F}; //volume +12dB channel B 
 // BEEP GENERATOR BUFFERS
 //------------------------------------------------------
 uint8_t MASTER_VOLUME[] = {(uint8_t)MASTER_VOLUME_REG,(uint8_t)0x18};//volume 12 db
@@ -102,7 +110,6 @@ static void MX_I2C1_Init(void);
 static void MX_SAI1_Init(void);
 static void MX_TIM6_Init(void);
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -117,6 +124,47 @@ static void USER_TIM6_init(void)//TIMER 6 init
         TIM6->CR2 |= TIM_CR2_MMS_1;    
         TIM6->CR1 |= TIM_CR1_CEN;                        
 }  
+
+void SAI_PASSTHROUGH_INIT (void)// Function initialises passthrough for PCM (SAI) to the HP
+{
+	//messages to send
+	uint8_t pwr_up[] = {(uint8_t)POWER_UP_REG, (uint8_t)0x01};//power up sequense
+	uint8_t pwr_2[] = {(uint8_t)POWER_CR2_REG, (uint8_t)0xAF};//HP always on, speaker muted
+	uint8_t clk[] = {(uint8_t)CLOCK_CONTROL_REG, (uint8_t)0x80};//auto detection of clk signal
+	uint8_t intfcntrl_1[] = {(uint8_t)INTERFACE_CONTROL_1_REG, (uint8_t)0x10};//slave with enabled DSP
+	uint8_t miscel[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0x30};//passthrough muted
+	uint8_t pbck_ctrl_2[] = {(uint8_t)PLAYBACKC_2_REG, (uint8_t)0x38};//speaker muted, headphones not muted
+	uint8_t pcma[] = {(uint8_t)PCMA_REG, (uint8_t)0x18};//PCM data from SAI volume +12dB on channel A to DSP
+	uint8_t pcmb[] = {(uint8_t)PCMB_REG, (uint8_t)0x18};//PCM data from SAI volume +12dB on channel B to DSP
+	uint8_t beep[] = {(uint8_t)BEEP_REG, (uint8_t)0x00};//BEEP generator is off
+	uint8_t msta[] = {(uint8_t)MSTA_REG, (uint8_t)0x18};//master volume +12dB on channel A
+	uint8_t mstb[] = {(uint8_t)MSTB_REG, (uint8_t)0x18};//master volume +12dB on channel B
+	uint8_t hpa[] = {(uint8_t)HPA_VOLUME_REG, (uint8_t)0x00};//hp volume not muted (0dB)
+	uint8_t hpb[] = {(uint8_t)HPB_VOLUME_REG, (uint8_t)0x00};//hp volume not muted (0dB)
+	uint8_t spka[] = {(uint8_t)SPKA_REG,(uint8_t)0x01};//speaker muted
+	uint8_t spkb[] = {(uint8_t)SPKB_REG,(uint8_t)0x01};//speaker muted
+	
+	//using HAL functions to set up the codac
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, pwr_up, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, pwr_2, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, clk, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, intfcntrl_1, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, miscel, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, pbck_ctrl_2, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, pcma, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, pcmb, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, beep, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, msta, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, mstb, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, hpa, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, hpb, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, spka, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, spkb, 2, 100);
+	
+	pwr_up[1] = (uint8_t)0x9E;
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE, pwr_up, 2, 100);//power up routine 
+	
+}
 /* USER CODE END 0 */
 
 /**
@@ -197,12 +245,6 @@ int main(void)
 	//---------------------------------------------------------------------------
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_IC_ADDR,1,TIMEOUT);
 	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_BEEP,1,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_PU,1,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_BPVOL,1,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	// Setup end
 	HAL_SAI_Transmit_IT(&hsai_BlockA1, SAI_TRANSFER, 3);//Transfer data to pump up the codac
   //Codac setup via I2C1 end
