@@ -132,7 +132,7 @@ void SAI_PASSTHROUGH_INIT (void)// Function initialises passthrough for PCM (SAI
 	uint8_t pwr_2[] = {(uint8_t)POWER_CR2_REG, (uint8_t)0xAF};//HP always on, speaker muted
 	uint8_t clk[] = {(uint8_t)CLOCK_CONTROL_REG, (uint8_t)0x80};//auto detection of clk signal
 	uint8_t intfcntrl_1[] = {(uint8_t)INTERFACE_CONTROL_1_REG, (uint8_t)0x10};//slave with enabled DSP
-	uint8_t miscel[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0x30};//passthrough muted
+	uint8_t miscel[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0xC0};//passthrough muted
 	uint8_t pbck_ctrl_2[] = {(uint8_t)PLAYBACKC_2_REG, (uint8_t)0x38};//speaker muted, headphones not muted
 	uint8_t pcma[] = {(uint8_t)PCMA_REG, (uint8_t)0x18};//PCM data from SAI volume +12dB on channel A to DSP
 	uint8_t pcmb[] = {(uint8_t)PCMB_REG, (uint8_t)0x18};//PCM data from SAI volume +12dB on channel B to DSP
