@@ -99,7 +99,7 @@ uint8_t CODAC_PU_EN = 0x9E;//power reg status
 uint8_t CODAC_IC_ADDR = 0x06;
 uint8_t INTRFC_CR1 = 0x06;//Interface Control 1 reg address
 //uint8_t SAI_TX_BUFF = {};
-uint8_t SAI_TRANSFER[] = {0xFF, 0xFF};
+uint8_t SAI_TRANSFER[] = {0x00, 0x00};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -132,7 +132,7 @@ void SAI_PASSTHROUGH_INIT (void)// Function initialises passthrough for PCM (SAI
 	uint8_t pwr_2[] = {(uint8_t)POWER_CR2_REG, (uint8_t)0xAF};//HP always on, speaker muted
 	uint8_t clk[] = {(uint8_t)CLOCK_CONTROL_REG, (uint8_t)0x80};//auto detection of clk signal
 	uint8_t intfcntrl_1[] = {(uint8_t)INTERFACE_CONTROL_1_REG, (uint8_t)0x10};//slave with enabled DSP
-	uint8_t miscel[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0xC0};//passthrough muted
+	uint8_t miscel[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0x30};//passthrough muted
 	uint8_t pbck_ctrl_2[] = {(uint8_t)PLAYBACKC_2_REG, (uint8_t)0x38};//speaker muted, headphones not muted
 	uint8_t pcma[] = {(uint8_t)PCMA_REG, (uint8_t)0x18};//PCM data from SAI volume +12dB on channel A to DSP
 	uint8_t pcmb[] = {(uint8_t)PCMB_REG, (uint8_t)0x18};//PCM data from SAI volume +12dB on channel B to DSP
@@ -223,7 +223,7 @@ int main(void)
 	
 	SAI_PASSTHROUGH_INIT();
 	
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,CLOCK_AUTO,2,TIMEOUT);	
+//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,CLOCK_AUTO,2,TIMEOUT);
 //	//  BEEP GENERATOR SETUP FOR A MULTIPLE PULSES
 //	//---------------------------------------------------------------------------
 //	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_CR2,2,TIMEOUT);
@@ -258,7 +258,7 @@ int main(void)
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&POWER_UP_BUFFER,1,TIMEOUT);
 	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	
-	HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 2, 100);
+	//HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 2, 100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -269,8 +269,7 @@ int main(void)
 		//HAL_SAI_Transmit use in to transmit data in blocking mode
 		//or use HAL_SAI_Transmit_IT to send data in nonblocking mode
 		
-		HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 2, 100);
-
+		HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 2, 10);
 		
     /* USER CODE END WHILE */
 
@@ -445,7 +444,6 @@ static void MX_SAI1_Init(void)
 {
 
   /* USER CODE BEGIN SAI1_Init 0 */
-
   /* USER CODE END SAI1_Init 0 */
 
   /* USER CODE BEGIN SAI1_Init 1 */
