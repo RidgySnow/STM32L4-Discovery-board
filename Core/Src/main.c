@@ -25,7 +25,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-// Define all desired register addresses
+// Define all register addresses
 #define CODAC_ADRESS_WRITE 0x94
 #define CODAC_ADRESS_READ 0x95
 #define TIMEOUT 10
@@ -98,8 +98,7 @@ uint8_t CODAC_PU = 0x02;//power reg adr
 uint8_t CODAC_PU_EN = 0x9E;//power reg status
 uint8_t CODAC_IC_ADDR = 0x06;
 uint8_t INTRFC_CR1 = 0x06;//Interface Control 1 reg address
-//uint8_t SAI_TX_BUFF = {};
-uint8_t SAI_TRANSFER[] = {0x00, 0x00};
+uint8_t SAI_TRANSFER[] = {0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -206,8 +205,7 @@ int main(void)
 	HAL_NVIC_EnableIRQ(TIM6_IRQn);
 	HAL_NVIC_EnableIRQ(SAI1_IRQn);
 	
-	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_RESET);//toggle the reset pin
-	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);//Reset pin on codac is HIGH
 	//Codac setup via I2C1 begin
 	// Reading from registers to make sure that it works and checking 
 	// if register Power Ctl 1 is set to 0x01
@@ -218,47 +216,40 @@ int main(void)
 	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&INTRFC_CR1,1,TIMEOUT);
 	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	// End
-	
-	// Setup for an analog output begin (need to make some kind of checkup if pwr reg is in normal condition)
-	
+	//To enable the beep generator, comment SAI_PASSTHROUGH_INIT() and uncomment sequence below
 	SAI_PASSTHROUGH_INIT();
-	
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,CLOCK_AUTO,2,TIMEOUT);
-//	//  BEEP GENERATOR SETUP FOR A MULTIPLE PULSES
-//	//---------------------------------------------------------------------------
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_CR2,2,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
-//	
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,MASTER_VOLUME,2,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
-
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEPVOL_OFFTIME,2,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-//	
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEPFREQ_ONTIME,2,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
-//	
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,MISCEL_CONTROLS,2,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-//	
-
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEP,2,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-//	
-//	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_UP,2,TIMEOUT);
-//	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-//	
-//	__HAL_SAI_ENABLE(&hsai_BlockA1);
+	/*------------------BEEP GENERATOR INIT BEGIN------------------------------------
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,CLOCK_AUTO,2,TIMEOUT);
+	//  BEEP GENERATOR SETUP FOR A MULTIPLE PULSES
 	//---------------------------------------------------------------------------
-	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&CODAC_IC_ADDR,1,TIMEOUT);
-	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
-	// Setup end
-	//HAL_SAI_Transmit_IT(&hsai_BlockA1, SAI_TRANSFER, 2);//Transfer data to pump up the codac
-  //Codac setup via I2C1 end
-	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,&POWER_UP_BUFFER,1,TIMEOUT);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_CR2,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
+	
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,MASTER_VOLUME,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
+
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEPVOL_OFFTIME,2,TIMEOUT);
 	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
 	
-	//HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 2, 100);
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEPFREQ_ONTIME,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);	
+	
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,MISCEL_CONTROLS,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
+	
+
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,BEEP,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
+	
+	HAL_I2C_Master_Transmit(&hi2c1,CODAC_ADRESS_WRITE,POWER_UP,2,TIMEOUT);
+	HAL_I2C_Master_Receive(&hi2c1,CODAC_ADRESS_READ,&RX_BUFFER,1,TIMEOUT);
+	
+	__HAL_SAI_ENABLE(&hsai_BlockA1);
+	
+	HAL_SAI_Transmit_IT(&hsai_BlockA1, SAI_TRANSFER, 2);//Transfer data to pump up the codac
+	------------------BEEP GENERATOR INIT END--------------------------------------*/
+
+  //Codac setup via I2C1 end
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -269,7 +260,7 @@ int main(void)
 		//HAL_SAI_Transmit use in to transmit data in blocking mode
 		//or use HAL_SAI_Transmit_IT to send data in nonblocking mode
 		
-		HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 2, 10);
+		HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 6, 10);
 		
     /* USER CODE END WHILE */
 
