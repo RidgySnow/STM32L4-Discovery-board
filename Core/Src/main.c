@@ -75,14 +75,12 @@ uint8_t PBCR_2[] = {(uint8_t)PLAYBACKC_2_REG, (uint8_t)0x08};
 uint8_t PSAVOL[] = {(uint8_t)PASSAVOL_REG, (uint8_t)0x0F}; //volume +12dB channel A
 uint8_t PSBVOL[] = {(uint8_t)PASSBVOL_REG, (uint8_t)0x0F}; //volume +12dB channel B 
 // BEEP GENERATOR BUFFERS
-//------------------------------------------------------
 uint8_t MASTER_VOLUME[] = {(uint8_t)MASTER_VOLUME_REG,(uint8_t)0x18};//volume 12 db
 uint8_t BEEPVOL_OFFTIME[] = {(uint8_t)BEEP_VOLUME_OFFTIME_REG,(uint8_t)0x06};//volume 12 db, off time 1.23s (for 96 kHz)
 uint8_t BEEPFREQ_ONTIME[] = {(uint8_t)BEEP_FREQ_ONTIME_REG,(uint8_t)0x77};//beep freq 1000 Hz, on time 2.50s
 uint8_t MISCEL_CONTROLS[] = {(uint8_t)MISCELLANEOUS_CONTROLS_REG, (uint8_t)0x60};//passthrough analog A to HP line enabled, B disabled and muted
 uint8_t POWER_CR2[] = {(uint8_t)POWER_CR2_REG,(uint8_t)0xAF};//HP line always on, speaker power always off
-uint8_t BEEP[] = {(uint8_t)BEEP_REG,(uint8_t)0x81};//multiple beeping, mix with SAI disabled, treble corner freq 5kHz, bass corner freq 50Hz, tone control enabled; change last!!!
-//------------------------------------------------------
+uint8_t BEEP[] = {(uint8_t)BEEP_REG,(uint8_t)0x81};//multiple beeping, mix with SAI disabled, treble corner freq 5kHz, bass corner freq 50Hz
 //----------------------BUFFERS-------------------------
 uint8_t TX_BUFFER = 0;
 uint8_t RX_BUFFER =  0;
@@ -98,7 +96,9 @@ uint8_t CODAC_PU = 0x02;//power reg adr
 uint8_t CODAC_PU_EN = 0x9E;//power reg status
 uint8_t CODAC_IC_ADDR = 0x06;
 uint8_t INTRFC_CR1 = 0x06;//Interface Control 1 reg address
-uint8_t SAI_TRANSFER[] = {0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF};//Message for SAI to send
+uint8_t SAI_TRANSFER[] = {0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF,
+0xFF, 0xFF,0x01, 0x01,0x01, 0x01, 0x01, 0x01,0x01, 0x01,0x01, 0x01, 0x01, 0x01,0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF,
+0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF,0xFF, 0xFF};//Message for SAI to send
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -260,7 +260,7 @@ int main(void)
 		//HAL_SAI_Transmit use in to transmit data in blocking mode
 		//or use HAL_SAI_Transmit_IT to send data in nonblocking mode
 		
-		HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 6, 10);
+		HAL_SAI_Transmit(&hsai_BlockA1, SAI_TRANSFER, 60, 10);
 		HAL_Delay(10);//delay for transfer time(?) without it there won't be time for volume amplification
     /* USER CODE END WHILE */
 
